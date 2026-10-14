@@ -905,6 +905,8 @@ document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{stop();mode=
 function setTab(m){mode=m;document.querySelectorAll(".tabs button").forEach(q=>q.setAttribute("aria-selected",q.dataset.m===m?"true":"false"))}
 const pathW=location.pathname.match(/^\/w\/([1-9A-HJ-NP-Za-km-z]{32,44})/),qT=new URLSearchParams(location.search).get("t");
 if(qT&&TERMINALS[qT])term=qT;
+const qS=new URLSearchParams(location.search).get("s"),GS=document.getElementById("genreSel");
+if(qS&&[...GS.options].some(o=>o.value===qS)){chosen=qS;GS.value=qS}
 TL.value=term;
 if(pathW){setTab("wallet");makeTrades(STYLES[0]);render();document.getElementById("addr").value=pathW[1];loadWallet(pathW[1])}
 else{buildTerminal(term);render();liveTerminal(term)}
