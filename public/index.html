@@ -87,60 +87,107 @@ button:focus-visible{outline:2px solid var(--green);outline-offset:2px}
 .pos{color:var(--green)}.neg{color:var(--red)}
 .note{color:var(--muted);font-size:.8rem;text-align:center;margin:0}
 @media (max-width:560px){.sleeve{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+
+/* calmer layout */
+.wrap{max-width:620px;gap:16px}
+.top{display:flex;justify-content:space-between;align-items:center}
+.brand{color:var(--text);text-decoration:none;font-weight:800}
+.brand span{color:var(--green)}
+.icons{display:flex;gap:6px}
+.icons a{color:var(--muted);display:grid;place-items:center;width:34px;height:34px;border-radius:10px}
+.icons a:hover{color:var(--text);background:var(--card)}
+.intro h1{font-size:clamp(1.8rem,6vw,2.4rem);margin:0}
+.intro .sub{margin:6px 0 0;font-size:.95rem;max-width:52ch}
+.pickers.one{grid-template-columns:1fr}
+.tabs{align-self:stretch;display:grid;grid-template-columns:1fr 1fr}
+.tabs button{text-align:center}
+.pickers{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pick{display:flex;flex-direction:column;gap:4px;min-width:0}
+.pick span{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.pick select{appearance:none;-webkit-appearance:none;background:var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239aa0b8' stroke-width='3'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px 34px 12px 14px;font:inherit;font-weight:700;font-size:1rem;width:100%;cursor:pointer}
+.pick select:focus-visible{outline:2px solid var(--green);outline-offset:1px}
+.stage{max-width:460px;margin:4px auto 0}
+.now{font-size:.95rem}
+.controls{display:flex;gap:10px;justify-content:center;align-items:center}
+.controls .play{min-width:180px;padding:15px 26px;font-size:1.05rem;border-radius:999px}
+.icon-btn{display:grid;place-items:center;width:50px;height:50px;border-radius:999px;background:transparent;color:var(--text);border:1px solid var(--line);padding:0;cursor:pointer;text-decoration:none}
+.icon-btn:hover{background:var(--card)}
+.icon-btn[data-busy]{color:var(--green);border-color:var(--green)}
+.vidhint{margin:0;text-align:center;color:var(--green);font-size:.85rem}
+.legend{font-size:.8rem}
+.stats{display:flex;justify-content:center;gap:6px 22px;flex-wrap:wrap}
+.stat{background:none;border:0;padding:0}
+.stats .v{font-size:1rem;display:inline}
+.stats .k{font-size:.8rem;display:inline}
+.note{font-size:.75rem}
+.cover{aspect-ratio:auto;min-height:220px}
+.textlink{background:none;border:0;color:var(--muted);text-decoration:underline;font-size:.85rem;padding:0;align-self:center;cursor:pointer}
+.textlink:hover{color:var(--text)}
+@media (max-width:560px){.stats{grid-template-columns:none}}
 </style>
 </head>
 <body>
 
 <div class="wrap">
-  <div class="top">owlchain<span>labs</span></div>
-  <div>
-    <span class="demo" id="demo"></span>
+  <header class="top">
+    <a class="brand" href="https://owlchainlabs.xyz">owlchain<span>labs</span></a>
+    <nav class="icons">
+      <a href="https://github.com/OwlChainLabs/wallet-vinyl" target="_blank" rel="noopener" aria-label="source code on github"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg></a>
+      <a href="https://x.com/OwlChainLabs" target="_blank" rel="noopener" aria-label="owlchainlabs on x"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+    </nav>
+  </header>
+
+  <div class="intro">
     <h1>💿 <span id="h">terminal vinyl</span></h1>
     <p class="sub" id="sub"></p>
   </div>
-  <div class="tabs" role="tablist"><button role="tab" data-m="terminal" aria-selected="true">terminal vinyl</button><button role="tab" data-m="wallet" aria-selected="false">wallet vinyl</button></div>
 
-  <form class="wform" id="wform" hidden><input id="addr" placeholder="paste any solana wallet address" spellcheck="false" autocomplete="off" aria-label="solana wallet address"><button type="submit" id="press">💿 press my record</button></form>
+  <div class="tabs" role="tablist"><button role="tab" data-m="terminal" aria-selected="true">terminals</button><button role="tab" data-m="wallet" aria-selected="false">your wallet</button></div>
+
+  <form class="wform" id="wform" hidden><input id="addr" placeholder="paste any solana wallet address" spellcheck="false" autocomplete="off" aria-label="solana wallet address"><button type="submit" id="press">press my record</button></form>
   <p class="err" id="err" hidden></p>
-  <div class="stage"><canvas id="cv" width="1000" height="1000" aria-label="vinyl record made from trades"></canvas><div class="banner" id="banner"></div></div>
-  <div class="now" id="now"></div>
-  <div class="legend" id="legend"></div>
-
-  <div class="terms" id="terms" role="group" aria-label="terminal"></div>
-  <div class="genres" id="genres" role="group" aria-label="genre">
-    <button data-g="auto" aria-pressed="true">✨ auto</button><button data-g="techno" aria-pressed="false">techno</button><button data-g="pop" aria-pressed="false">pop</button><button data-g="rap" aria-pressed="false">rap</button><button data-g="classic" aria-pressed="false">classic</button><button data-g="lofi" aria-pressed="false">lo-fi</button>
+  <div class="pickers" id="pickers">
+    <label class="pick" id="termPick"><span>terminal</span><select id="termSel" aria-label="terminal"></select></label>
+    <label class="pick"><span>sound</span><select id="genreSel" aria-label="sound">
+      <option value="auto">auto</option><option value="pop">pop</option><option value="lofi">lo-fi</option><option value="techno">techno</option><option value="rap">rap</option><option value="classic">classic</option>
+    </select></label>
   </div>
+
+
+  <div class="stage"><canvas id="cv" width="1000" height="1000" aria-label="vinyl record"></canvas><div class="banner" id="banner"></div></div>
+  <div class="now" id="now"></div>
+
   <div class="controls">
     <button class="play" id="play">▶ play</button>
-    <button class="ghost" id="shuffle">🎲 try a sample wallet</button>
-    <a class="share" id="share" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>share</a>
-    <button class="ghost" id="video">🎬 save video</button>
+    <a class="icon-btn" id="share" target="_blank" rel="noopener" aria-label="share on x" title="share on x"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+    <button class="icon-btn" id="video" aria-label="save as video" title="save as video"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></button>
+  </div>
+  <p class="vidhint" id="vidhint" hidden></p>
+
+  <div class="legend" id="legend"></div>
+  <div class="stats" id="stats">
+    <div class="stat"><span class="v" id="sP"></span> <span class="k" id="kP">net pnl</span></div>
+    <div class="stat"><span class="v" id="sT"></span> <span class="k" id="kT">trades</span></div>
+    <div class="stat"><span class="v" id="sW"></span> <span class="k" id="kW">win rate</span></div>
+    <span id="sB" hidden></span>
   </div>
 
-  <section class="sleeve" aria-label="album sleeve">
+  <section class="sleeve" id="sleeve" aria-label="album sleeve" hidden>
     <div class="cover" id="cover">
       <span class="genre" id="genre"></span>
-      <div>
-        <div class="title" id="title"></div>
-        <div class="artist" id="artist"></div>
-      </div>
+      <div><div class="title" id="title"></div><div class="artist" id="artist"></div></div>
       <div class="label">℗ 2026 owlchainlabs records · side a</div>
     </div>
     <div class="tracks">
-      <h2 id="th">tracklist · biggest moves</h2>
+      <h2 id="th">tracklist</h2>
       <div id="tracks"></div>
       <div class="foot" id="tfoot"></div>
     </div>
   </section>
 
-  <div class="stats">
-    <div class="stat"><div class="k" id="kT">trades</div><div class="v" id="sT"></div></div>
-    <div class="stat"><div class="k" id="kP">net pnl</div><div class="v" id="sP"></div></div>
-    <div class="stat"><div class="k" id="kW">win rate</div><div class="v" id="sW"></div></div>
-    <div class="stat"><div class="k">tempo</div><div class="v" id="sB"></div></div>
-  </div>
   <p class="note" id="note"></p>
-  <p class="note">open source · <a href="https://github.com/OwlChainLabs/wallet-vinyl">github</a> · no keys, public addresses only · built by <a href="https://x.com/OwlChainLabs">@OwlChainLabs</a></p>
+  <button class="textlink" id="shuffle" hidden>show another sample wallet</button>
+  <span id="demo" hidden></span>
 </div>
 
 <script>
@@ -279,13 +326,15 @@ const sol=v=>(v>=0?"+":"−")+Math.abs(v).toFixed(Math.abs(v)>=10?1:Math.abs(v)<
 
 function render(){
   G=genreFor();
-  document.getElementById("shuffle").hidden=isT();document.getElementById("terms").hidden=!isT();
+  document.getElementById("shuffle").hidden=isT()||!!realWallet;document.getElementById("termPick").hidden=!isT();
+  document.getElementById("sleeve").hidden=isT();
   document.getElementById("h").textContent=isT()?"terminal vinyl":"wallet vinyl";
+  document.getElementById("pickers").classList.toggle("one",!isT());
   document.getElementById("demo").textContent="live data from tehcscreener";
   document.getElementById("wform").hidden=isT();document.getElementById("err").hidden=true;
   updateShare();
   if(isT())return renderT();
-  document.getElementById("sub").textContent="your trades pressed on a record. green grooves are wins, red are losses. pick a genre or let your trading style decide.";
+  document.getElementById("sub").textContent="your trades pressed on a record. green grooves are wins, red are losses. paste a wallet and press play.";
   document.getElementById("legend").innerHTML='<span><i style="background:#14f195"></i>win, higher note</span><span><i style="background:#ff5c7a"></i>loss, lower note</span><span>groove width = trade size</span>';
   document.getElementById("kT").textContent="trades";document.getElementById("kP").textContent="net pnl";document.getElementById("kW").textContent="win rate";
   document.getElementById("th").textContent="tracklist · biggest moves";
@@ -311,8 +360,8 @@ function render(){
 
 function renderT(){
   const t=TERMINALS[term],n=trades.length,tot=trades.reduce((a,q)=>a+q.size,0),ath=trades.reduce((m,q,i)=>q.size>trades[m].size?i:m,0);
-  document.getElementById("sub").textContent=`${t.n}'s trading volume pressed on a record. every groove is about ${Math.max(1,Math.round(t.days/n))} days of ${t.n}. the colors show which chain the volume came from. new chains join the song as new instruments.`;
-  document.getElementById("kT").textContent="days of history";document.getElementById("kP").textContent="total volume";document.getElementById("kW").textContent="chains";
+  document.getElementById("sub").textContent=`${t.n}'s trading volume pressed on a record. every groove is a few days, the colors are chains. press play.`;
+  document.getElementById("kT").textContent="days";document.getElementById("kP").textContent="traded";document.getElementById("kW").textContent="chains";
   document.getElementById("sT").textContent=t.days;
   const sp=document.getElementById("sP");sp.textContent=usd(tot);sp.className="v";
   document.getElementById("sW").textContent=t.chains.length;
@@ -332,7 +381,7 @@ function renderT(){
   const secs=Math.round(n*stepMs()/1000);
   document.getElementById("tfoot").textContent=`total running time ${Math.floor(secs/60)}:${String(secs%60).padStart(2,"0")} · ${t.chains.map(c=>c.n).join(", ")}`;
   document.getElementById("now").textContent=`${G.name} record · ${t.from.slice(0,4)} to ${t.to.slice(0,4)} · press play`;
-  document.getElementById("note").innerHTML=`volume data: <a href="https://tehcscreener.com" target="_blank" rel="noopener">tehcscreener.com</a>, snapshot through Oct 11 2026.`;
+  document.getElementById("note").innerHTML=`volume data: <a href="https://tehcscreener.com" target="_blank" rel="noopener">tehcscreener.com</a>, ${t.live?"live, through "+t.to:"snapshot through Oct 11 2026"}.`;
   draw();
 }
 
@@ -548,11 +597,9 @@ function play(){
 }
 function stop(){playing=false;clearTimeout(timer);idx=-1;speed=1;document.getElementById("play").textContent="▶ play"}
 document.getElementById("play").onclick=()=>playing?stop():play();
-document.querySelectorAll("#genres button").forEach(btn=>btn.onclick=()=>{
-  const wasPlaying=playing;stop();chosen=btn.dataset.g;
-  document.querySelectorAll("#genres button").forEach(b=>b.setAttribute("aria-pressed",b===btn?"true":"false"));
-  render();if(wasPlaying)play();
-});
+document.getElementById("genreSel").onchange=e=>{
+  const wasPlaying=playing;stop();chosen=e.target.value;render();if(wasPlaying)play();
+};
 document.getElementById("shuffle").onclick=()=>{stop();album=null;realWallet="";history.replaceState(null,"","/");styleIdx=(styleIdx+1)%STYLES.length;seed=Math.floor(Math.random()*1e9)+1;makeTrades(STYLES[styleIdx]);render()};
 
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -750,7 +797,7 @@ async function loadWallet(addr){
     album={title:j.title,tracks:j.tracks||{}};realWallet=addr;wallet=short(addr);
     history.replaceState(null,"","/w/"+addr);render();
   }catch(e){showErr("something broke while reading this wallet. try again in a minute.")}
-  finally{btn.disabled=false;btn.textContent="💿 press my record"}
+  finally{btn.disabled=false;btn.textContent="press my record"}
 }
 document.getElementById("wform").onsubmit=e=>{e.preventDefault();loadWallet(document.getElementById("addr").value)};
 
@@ -768,14 +815,14 @@ async function liveTerminal(id){
     const tot=days.map((_,d)=>keep.reduce((a,x)=>a+x.v[d],0));let st=tot.findIndex(v=>v>1000),en=days.length-1;while(en>st&&tot[en]<1000)en--;
     const D=en-st+1,n=Math.min(120,D);if(st<0||n<10)return;
     const buck=v=>{const o=[];for(let k=0;k<n;k++){const a=st+Math.floor(k*D/n),b=st+Math.floor((k+1)*D/n);let sm=0;for(let d=a;d<b;d++)sm+=v[d];o.push(sm/1e6/((b-a)||1))}return o};
-    TERMINALS[id]={n:TERMINALS[id]?.n||j.display_name,from:days[st],to:days[en],days:D,chains:keep.map(x=>({n:x.n,c:CHAIN_COL[x.n]||"#7a8099",v:buck(x.v)}))};
+    TERMINALS[id]={live:true,n:TERMINALS[id]?.n||j.display_name,from:days[st],to:days[en],days:D,chains:keep.map(x=>({n:x.n,c:CHAIN_COL[x.n]||"#7a8099",v:buck(x.v)}))};
     if(isT()&&term===id&&!playing){buildTerminal(id);render()}
   }catch(e){}
 }
 
 // video: records the record with sound while it plays, then downloads it
 async function saveVideo(){
-  const btn=document.getElementById("video");if(btn.dataset.busy)return;btn.dataset.busy=1;btn.textContent="🎬 recording… let it play";
+  const btn=document.getElementById("video");if(btn.dataset.busy)return;btn.dataset.busy=1;const hint=document.getElementById("vidhint");hint.hidden=false;hint.textContent="recording the full record with sound… let it play";
   stop();setupAudio();await actx.resume();
   const Wd=1080,Ht=1350,c=document.createElement("canvas");c.width=Wd;c.height=Ht;const g=c.getContext("2d");
   const head=isT()?`what ${TERMINALS[term].n}'s volume sounds like`:(realWallet?"what my wallet sounds like":"what a wallet sounds like");
@@ -799,7 +846,7 @@ async function saveVideo(){
   }
   const dest=actx.createMediaStreamDestination();master.connect(dest);
   const mime=["video/mp4;codecs=avc1,mp4a","video/mp4","video/webm;codecs=vp9,opus","video/webm"].find(m=>window.MediaRecorder&&MediaRecorder.isTypeSupported(m));
-  if(!mime){btn.textContent="🎬 video not supported in this browser";delete btn.dataset.busy;return}
+  if(!mime){hint.textContent="video saving is not supported in this browser";delete btn.dataset.busy;return}
   const mr=new MediaRecorder(new MediaStream([...c.captureStream(30).getVideoTracks(),...dest.stream.getAudioTracks()]),{mimeType:mime,videoBitsPerSecond:8e6});
   const chunks=[];mr.ondataavailable=e=>chunks.push(e.data);frame();mr.start(500);
   await new Promise(r=>setTimeout(r,600));play();
@@ -807,19 +854,20 @@ async function saveVideo(){
   rec=false;mr.stop();await new Promise(r=>mr.onstop=r);master.disconnect(dest);
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(chunks,{type:mime}));
   a.download=`${isT()?term:(realWallet?short(realWallet).replace("…","-"):"sample")}-vinyl.${mime.includes("mp4")?"mp4":"webm"}`;a.click();
-  btn.textContent="🎬 save video";delete btn.dataset.busy;
+  hint.textContent="saved ✓";setTimeout(()=>hint.hidden=true,2500);delete btn.dataset.busy;
 }
 document.getElementById("video").onclick=saveVideo;
 
-const TL=document.getElementById("terms");
-Object.entries(TERMINALS).forEach(([id,t])=>{const b=document.createElement("button");b.textContent=t.n;b.dataset.t=id;b.setAttribute("aria-pressed",id===term?"true":"false");
-  b.onclick=()=>{stop();term=id;TL.querySelectorAll("button").forEach(q=>q.setAttribute("aria-pressed",q===b?"true":"false"));buildTerminal(id);render();liveTerminal(id)};TL.appendChild(b)});
+const TL=document.getElementById("termSel");
+Object.entries(TERMINALS).forEach(([id,t])=>{const o=document.createElement("option");o.value=id;o.textContent=t.n;TL.appendChild(o)});
+TL.onchange=()=>{stop();term=TL.value;buildTerminal(term);render();liveTerminal(term)};
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{stop();mode=b.dataset.m;
   document.querySelectorAll(".tabs button").forEach(q=>q.setAttribute("aria-selected",q===b?"true":"false"));
   if(isT()){buildTerminal(term);history.replaceState(null,"","/")}else if(!realWallet)makeTrades(STYLES[styleIdx]);render()});
 function setTab(m){mode=m;document.querySelectorAll(".tabs button").forEach(q=>q.setAttribute("aria-selected",q.dataset.m===m?"true":"false"))}
 const pathW=location.pathname.match(/^\/w\/([1-9A-HJ-NP-Za-km-z]{32,44})/),qT=new URLSearchParams(location.search).get("t");
-if(qT&&TERMINALS[qT]){term=qT;TL.querySelectorAll("button").forEach(q=>q.setAttribute("aria-pressed",q.dataset.t===qT?"true":"false"))}
+if(qT&&TERMINALS[qT])term=qT;
+TL.value=term;
 if(pathW){setTab("wallet");makeTrades(STYLES[0]);render();document.getElementById("addr").value=pathW[1];loadWallet(pathW[1])}
 else{buildTerminal(term);render();liveTerminal(term)}
 spin();
