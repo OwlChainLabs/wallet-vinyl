@@ -139,7 +139,7 @@ button:focus-visible{outline:2px solid var(--green);outline-offset:2px}
 .li u{grid-column:2/4;height:4px;border-radius:2px;background:var(--line);overflow:hidden;text-decoration:none}
 .li s{display:block;height:100%;border-radius:2px;text-decoration:none}
 .lh{margin:4px 0 0;font-size:.78rem;line-height:1.45}
-.stats{margin-top:18px}
+.stats{margin-top:0}
 .note{margin-top:4px}
 .pick span{font-size:.75rem}
 .pick select{background-color:var(--card);border:1px solid transparent;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2314f195' stroke-width='3'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"),linear-gradient(var(--card),var(--card)),linear-gradient(120deg,rgba(153,69,255,.7),rgba(20,241,149,.5));background-repeat:no-repeat;background-position:right 12px center,0 0,0 0;background-origin:padding-box,padding-box,border-box;background-clip:padding-box,padding-box,border-box;transition:transform .12s,box-shadow .2s}
@@ -151,7 +151,13 @@ button:focus-visible{outline:2px solid var(--green);outline-offset:2px}
   .center{order:1}
   .deck::after{display:none}
 }
-@media (min-width:821px){.deck::after{content:"";}}
+@media (min-width:821px){
+  .stats{flex-direction:column;align-items:flex-start;gap:16px}
+  .stats .stat{display:flex;flex-direction:column}
+  .stats .v{font-size:1.5rem;font-weight:800;line-height:1.1}
+  .stats .k{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase}
+}
+@media (max-width:820px){.stats{order:3}}
 </style>
 </head>
 <body>
@@ -195,14 +201,14 @@ button:focus-visible{outline:2px solid var(--green);outline-offset:2px}
   </div>
   <p class="vidhint" id="vidhint" hidden></p>
   </div>
-  </div>
-
-  <div class="stats" id="stats">
+  <aside class="stats" id="stats">
     <div class="stat"><span class="v" id="sP"></span> <span class="k" id="kP">net pnl</span></div>
     <div class="stat"><span class="v" id="sT"></span> <span class="k" id="kT">trades</span></div>
     <div class="stat"><span class="v" id="sW"></span> <span class="k" id="kW">win rate</span></div>
     <span id="sB" hidden></span>
+  </aside>
   </div>
+
 
   <section class="sleeve" id="sleeve" aria-label="album sleeve" hidden>
     <div class="cover" id="cover">
@@ -891,7 +897,7 @@ async function saveVideo(){
 document.getElementById("video").onclick=saveVideo;
 
 const TL=document.getElementById("termSel");
-Object.entries(TERMINALS).forEach(([id,t])=>{const o=document.createElement("option");o.value=id;o.textContent=t.n;TL.appendChild(o)});
+Object.entries(TERMINALS).sort((a,b)=>a[1].n.localeCompare(b[1].n,"en",{sensitivity:"base"})).forEach(([id,t])=>{const o=document.createElement("option");o.value=id;o.textContent=t.n;TL.appendChild(o)});
 TL.onchange=()=>{stop();term=TL.value;buildTerminal(term);render();liveTerminal(term)};
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{stop();mode=b.dataset.m;
   document.querySelectorAll(".tabs button").forEach(q=>q.setAttribute("aria-selected",q===b?"true":"false"));
