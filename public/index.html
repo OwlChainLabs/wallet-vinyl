@@ -108,7 +108,7 @@ button:focus-visible{outline:2px solid var(--green);outline-offset:2px}
 
   <div class="terms" id="terms" role="group" aria-label="terminal"></div>
   <div class="genres" id="genres" role="group" aria-label="genre">
-    <button data-g="auto" aria-pressed="true">✨ auto</button><button data-g="techno" aria-pressed="false">techno</button><button data-g="pop" aria-pressed="false">pop</button><button data-g="rap" aria-pressed="false">rap</button><button data-g="classic" aria-pressed="false">classic</button>
+    <button data-g="auto" aria-pressed="true">✨ auto</button><button data-g="techno" aria-pressed="false">techno</button><button data-g="pop" aria-pressed="false">pop</button><button data-g="rap" aria-pressed="false">rap</button><button data-g="classic" aria-pressed="false">classic</button><button data-g="lofi" aria-pressed="false">lo-fi</button>
   </div>
   <div class="controls">
     <button class="play" id="play">▶ play</button>
@@ -248,6 +248,8 @@ const GENRES={
     titles:["4AM Scalp Sessions","Buy Sell Repeat (Extended Mix)","Ninety Trades Before Breakfast","Slippage in the Club"]},
   blues:{name:"blues",bpm:76,step:.32,wave:["triangle","sawtooth"],kickEvery:4,scale:[0,3,5,6,7,10],art:"linear-gradient(160deg,#1b2a6b 0,#0b1030 55%,#2a0d1e 100%)",
     titles:["Songs in the Key of Rug","Exit Liquidity (Deluxe Edition)","Bagholder Blues","Down Bad, Live at the Trenches"]},
+  lofi:{name:"lo-fi",bpm:78,step:.3,wave:["sine","sine"],kickEvery:0,scale:[0,2,3,5,7,9,10],art:"linear-gradient(160deg,#3a2a5e 0,#1d2b4a 50%,#0f1a2b 100%)",
+    titles:["Charts to Relax To","Lo-Fi Beats to Get Rugged To","3AM Candles","Soft Hands, Hard Bags"]},
   pop:{name:"pop",bpm:118,step:.2,wave:["triangle","triangle"],kickEvery:4,scale:[0,2,4,7,9],art:"linear-gradient(135deg,#ff5c7a 0,#ffc857 45%,#14f195 100%)",
     titles:["Up Only (Radio Edit)","Greatest Wins","Green Candles Forever","Certified Snipes"]},
   rap:{name:"rap",bpm:90,step:.165,wave:["square","square"],kickEvery:0,scale:[0,3,5,7,10],art:"linear-gradient(160deg,#1a1a1a 0,#3b2a0a 50%,#ffc857 140%)",
@@ -420,6 +422,7 @@ const midi=m=>440*Math.pow(2,(m-69)/12);
 // melody note from the trade, bass and chord from the running pnl
 function trendDeg(){const r=range[1]-range[0]||1;return (cum-range[0])/r} // 0 = lowest point, 1 = highest
 function voice(kind,f,now,vol,dur){
+  if(G.name==="lo-fi"){osc("triangle",f,now,vol*.7,dur*1.8,1400);osc("sine",f*2,now,vol*.18,dur*.9,1800);osc("sine",f*1.003,now,vol*.35,dur*1.8,1200);return}
   if(G.name==="classic")kind=kind==="square"||kind==="saw"?"organ":kind;
   if(kind==="bell"){osc("sine",f,now,vol,dur*1.4);osc("sine",f*2.01,now,vol*.35,dur*.5);osc("sine",f*3.98,now,vol*.12,dur*.3)}
   else if(kind==="square")osc("square",f,now,vol*.45,dur,2200);
@@ -444,7 +447,8 @@ function chainLayers(t,now){
     if(k===0||!v||!t.size)return;
     const share=v/t.size,vol=.03+.22*Math.sqrt(share),third=up?4:3,tones=[0,third,7,12,14,third+12];
     const voice=[["sine",3,1],["triangle",2,3],["square",3,0],["sine",4,2],["sawtooth",2,1],["triangle",4,3]][(k-1)%6];
-    if(b%4===voice[2])osc(voice[0],midi(root+12*voice[1]+tones[(idx+k)%tones.length]),now,vol*(voice[0]==="square"||voice[0]==="sawtooth"?.4:1),G.step*3,2600);
+    const vt=G.name==="lo-fi"&&(voice[0]==="square"||voice[0]==="sawtooth")?"triangle":voice[0];
+    if(b%4===voice[2])osc(vt,midi(root+12*voice[1]+tones[(idx+k)%tones.length]),now,vol*(voice[0]==="square"||voice[0]==="sawtooth"?.4:1),G.step*3,2600);
   });
 }
 function melody(t,now){
@@ -456,6 +460,7 @@ function melody(t,now){
   const dec=G.name==="ballad"?2.2:G.name==="blues"?.9:G.step*2.4;
   if(G.name==="classic"){osc("triangle",f*2,now,vol*.8,1.4,2400);osc("sine",f*4,now,vol*.15,.6);return}
   if(G.name==="rap"){osc("square",f*2,now,vol*.35,.18,1800);return}
+  if(G.name==="lo-fi"){osc("triangle",f*2,now,vol*.6,1.6,1400);osc("sine",f*4,now,vol*.12,.8,1800);return}
   osc(t.pnl>0?G.wave[0]:G.wave[1],f,now,vol,dec,t.pnl>0?3400:1000);
   if(t.pnl>0&&G.name!=="techno")osc("sine",f*2,now,vol*.25,dec*.6);
 }
@@ -476,8 +481,13 @@ function groove(now){
     const third=up?4:3,arp=[0,7,12,third+12][b%4];osc("triangle",midi(bassNote+24+arp),now,.06,G.step*3,1800);
     if(b%4===0)osc("sine",midi(bassNote+12),now,.12,G.step*5);
   }
+  else if(G.name==="lo-fi"){
+    if(b===0||b===5)kick(now);if(b===2||b===6)snare(now);if(b%2===1)hat(now,.025);
+    if(b%4===0)osc("sine",midi(bassNote+12),now,.28,G.step*3.5,500);
+    if(b%4===0){const third=up?4:3,sev=up?11:10;[0,third,7,sev].forEach((iv,k)=>osc("triangle",midi(bassNote+24+iv),now+k*.03,.035,G.step*4.5,1100))}
+  }
   else {if(b===0)kick(now);}
-  if(b===0){ // chord pad, major when in profit, minor when down
+  if(b===0&&G.name!=="lo-fi"){ // chord pad, major when in profit, minor when down
     const third=up?4:3,base=bassNote+24;
     [0,third,7].forEach(iv=>osc(G.name==="techno"?"sawtooth":"sine",midi(base+iv),now,G.name==="techno"?.025:.05,G.step*8,1600));
   }
