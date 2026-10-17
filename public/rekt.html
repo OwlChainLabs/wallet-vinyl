@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>rekt radio · owl chain labs</title>
+<meta name="description" content="hear the market liquidate traders. every liquidation is a sound, every whale is a drop. live data from liquidate.fun.">
+<meta property="og:title" content="rekt radio">
+<meta property="og:description" content="hear the market liquidate traders. live data from liquidate.fun.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/owl.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* layout: framed column like every owlchainlabs page; a wide liquidation tape is the instrument, playhead sweeps it */
+:root{--bg:#08090b;--card:#0c0e11;--line:#1c1f24;--fg:#eceef1;--mute:#8a9099;--faint:#565c66;--g:#3ddc97;--r:#ff5c7a;
+  --sans:"Geist",ui-sans-serif,system-ui,sans-serif;--mono:"Geist Mono",ui-monospace,Menlo,monospace;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;border-inline:1px solid var(--line);min-height:100vh}
+.top{display:flex;justify-content:space-between;align-items:center;height:64px;padding:0 24px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.02em;text-decoration:none}
+.brand b{color:var(--g)}
+.brand svg{width:24px;height:30px}
+.icons{display:flex;gap:8px}
+.icons a{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 12px;border:1px solid var(--line);border-radius:10px;font:500 13.5px var(--sans);text-decoration:none}
+.icons a:hover{background:var(--card)}
+.hero{position:relative;text-align:center;padding:52px 24px 26px;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(ellipse 55% 80% at 50% 20%,#000 10%,transparent 75%);opacity:.55;pointer-events:none}
+.hero>*{position:relative}
+.eyebrow{display:inline-flex;gap:8px;align-items:center;font:500 12.5px var(--mono);color:var(--mute);border:1px solid var(--line);background:var(--card);padding:5px 12px;border-radius:999px}
+.eyebrow::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--r);animation:pls 1.4s infinite}
+@keyframes pls{50%{opacity:.3}}
+h1{font-size:clamp(38px,6vw,64px);line-height:1.02;letter-spacing:-.045em;margin:18px 0 12px;font-weight:700}
+h1 em{font-style:normal;color:var(--r)}
+.sub{color:var(--mute);font-size:16px;max-width:52ch;margin:0 auto;text-wrap:balance}
+.ctrl{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:26px}
+.seg{display:flex;gap:4px;padding:4px;border:1px solid var(--line);background:var(--card);border-radius:12px}
+.seg button{border:0;background:transparent;color:var(--mute);font:500 14px var(--sans);padding:9px 16px;border-radius:9px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.play{border:0;border-radius:999px;background:var(--fg);color:var(--bg);font:600 16px var(--sans);padding:13px 28px;min-width:200px;cursor:pointer}
+.play:focus-visible,.seg button:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+.stage{position:relative;border-block:1px solid var(--line);margin-top:30px}
+canvas{display:block;width:100%;height:340px}
+.banner{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%) scale(.7);opacity:0;pointer-events:none;text-align:center;font:700 clamp(28px,6vw,56px) var(--sans);letter-spacing:-.04em;text-shadow:0 6px 40px rgba(0,0,0,.9);transition:opacity .25s,transform .35s cubic-bezier(.2,1.6,.4,1);white-space:nowrap}
+.banner small{display:block;font:500 13px var(--mono);letter-spacing:.08em;color:var(--fg);opacity:.85}
+.banner.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.now{display:flex;justify-content:space-between;gap:12px;padding:12px 24px;font:13px var(--mono);color:var(--mute);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.now b{color:var(--fg);font-weight:500}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line)}
+.stats div{padding:20px 24px;border-right:1px solid var(--line);min-width:0}
+.stats div:last-child{border-right:0}
+.stats b{display:block;font:650 26px var(--sans);letter-spacing:-.03em;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stats span{font:12px var(--mono);color:var(--faint)}
+.red{color:var(--r)}.grn{color:var(--g)}
+.how{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line)}
+.how div{padding:22px 24px;border-right:1px solid var(--line);color:var(--mute);font-size:14px;line-height:1.5}
+.how div:last-child{border-right:0}
+.how b{display:flex;align-items:center;gap:8px;color:var(--fg);font-weight:600;margin-bottom:4px}
+.how i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.share{display:flex;justify-content:center;gap:10px;padding:26px 24px;border-bottom:1px solid var(--line)}
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:11px 16px;font:500 14px var(--sans);text-decoration:none;color:var(--fg);background:transparent}
+.btn:hover{background:var(--card)}
+.note{text-align:center;padding:20px 24px 32px;font:12.5px var(--mono);color:var(--faint);line-height:1.7}
+.note a{color:var(--mute)}
+@media(max-width:760px){.stats{grid-template-columns:1fr 1fr}.stats div:nth-child(2){border-right:0}.stats div:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .how{grid-template-columns:1fr}.how div{border-right:0;border-bottom:1px solid var(--line)}.how div:last-child{border-bottom:0}
+  .top,.hero,.now,.stats div,.how div,.share,.note{padding-inline:16px}canvas{height:260px}.icons a span{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="https://owlchainlabs.xyz"><svg viewBox="100 75 200 250" aria-hidden="true"><path d="M110 150 L125 85 L170 125 Q200 112 230 125 L275 85 L290 150 Q300 270 200 315 Q100 270 110 150 Z" fill="#f2f2f5" stroke="#2a2e35" stroke-width="6"/><circle cx="158" cy="180" r="38" fill="#0a0d1a"/><circle cx="242" cy="180" r="38" fill="#0a0d1a"/><circle cx="158" cy="180" r="20" fill="#14f195"/><circle cx="242" cy="180" r="20" fill="#9945ff"/><circle cx="165" cy="172" r="6" fill="#fff"/><circle cx="249" cy="172" r="6" fill="#fff"/><path d="M188 222 L212 222 L200 248 Z" fill="#0a0d1a"/><g fill="none" stroke="#0a0d1a" stroke-width="7"><rect x="160" y="262" width="36" height="20" rx="10"/><rect x="204" y="262" width="36" height="20" rx="10"/></g><line x1="188" y1="272" x2="212" y2="272" stroke="#0a0d1a" stroke-width="7"/></svg><span>owlchain<b>labs</b></span></a>
+    <nav class="icons">
+      <a href="https://x.com/OwlChainLabs" target="_blank" rel="noopener" aria-label="X"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23 22h-6.8l-5.3-6.9L4.8 22H1.7l8.1-9.3L1 2h7l4.8 6.3L18.9 2Zm-1.2 18h1.9L7.4 3.9H5.4L17.7 20Z"/></svg></a>
+      <a href="https://github.com/OwlChainLabs/wallet-vinyl" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5Z"/></svg><span>github</span></a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <span class="eyebrow">live liquidations · data by liquidate.fun</span>
+    <h1>Hear traders get <em>rekt.</em></h1>
+    <p class="sub">The last 24 hours of liquidations as a track. Longs wiped out hit low, shorts hit high, every whale drops the bass.</p>
+    <div class="ctrl">
+      <div class="seg" role="group" aria-label="coin"><button id="cBTC" aria-pressed="true">BTC</button><button id="cSOL" aria-pressed="false">SOL</button></div>
+      <button class="play" id="play">▶ play last 24h</button>
+    </div>
+  </section>
+
+  <div class="stage"><canvas id="cv"></canvas><div class="banner" id="banner"></div></div>
+  <div class="now"><span id="nowL">loading liquidations…</span><span id="nowR"></span></div>
+
+  <div class="stats">
+    <div><b class="red" id="sL">–</b><span>longs rekt · 24h</span></div>
+    <div><b class="grn" id="sS">–</b><span>shorts rekt · 24h</span></div>
+    <div><b id="sB">–</b><span>biggest wipeout</span></div>
+    <div><b id="sP">–</b><span>price now</span></div>
+  </div>
+
+  <div class="how">
+    <div><b><i style="background:var(--r)"></i>longs liquidated</b>Red bars hang down. Bigger bar, deeper and louder bass hit.</div>
+    <div><b><i style="background:var(--g)"></i>shorts liquidated</b>Green bars stand up. They play as high notes on top of the beat.</div>
+    <div><b><i style="background:var(--fg)"></i>whale wipeouts</b>Cascades over $1M stop the track for a drop and a banner.</div>
+  </div>
+
+  <div class="share"><a class="btn" id="shareX" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23 22h-6.8l-5.3-6.9L4.8 22H1.7l8.1-9.3L1 2h7l4.8 6.3L18.9 2Zm-1.2 18h1.9L7.4 3.9H5.4L17.7 20Z"/></svg>post today's rekt count</a><a class="btn" href="https://liquidate.fun" target="_blank" rel="noopener">open liquidate.fun ↗</a></div>
+  <p class="note">liquidation data by <a href="https://liquidate.fun" target="_blank" rel="noopener">liquidate.fun</a> from hyperliquid, binance, bybit, okx and more · 5 minute buckets, refreshed every minute<br>open source · built by <a href="https://x.com/OwlChainLabs" target="_blank" rel="noopener">@OwlChainLabs</a> · for fun, not financial advice</p>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const usd=v=>v>=1e9?"$"+(v/1e9).toFixed(2)+"B":v>=1e6?"$"+(v/1e6).toFixed(1)+"M":v>=1e3?"$"+(v/1e3).toFixed(0)+"k":"$"+Math.round(v);
+let coin=(new URLSearchParams(location.search).get("c")||"btc").toLowerCase()==="sol"?"sol":"btc";
+let data=null,idx=-1,playing=false;
+
+// ---------- data ----------
+const SAMPLE=(()=>{const b=[];let p=82000,s=11;const r=()=>(s=(s*16807)%2147483647)/2147483647;const t0=Date.now()-288*3e5;
+  for(let i=0;i<288;i++){p+=(r()-.5)*160;const spike=r()>.94;b.push({t:t0+i*3e5,p,l:r()>.45?r()**3*(spike?9e6:9e5):0,s:r()>.55?r()**3*(spike?5e6:6e5):0})}
+  return{coin:"BTC",buckets:b,highlights:[],sample:true}})();
+async function load(){
+  try{const r=await fetch(`/api/liq?c=${coin}`,{signal:AbortSignal.timeout(9000)});if(!r.ok)throw 0;const j=await r.json();if(!j.buckets?.length)throw 0;data=j}
+  catch(e){data={...SAMPLE,coin:coin.toUpperCase()}}
+  data.big=(data.highlights||[]).filter(h=>h.usd>=1e6&&["burst","cascade","mine_result"].includes(h.kind));
+  stats();draw();
+}
+function stats(){const b=data.buckets,L=b.reduce((a,x)=>a+x.l,0),S=b.reduce((a,x)=>a+x.s,0);
+  const top=b.reduce((m,x)=>Math.max(m,x.l,x.s),0),bigH=(data.highlights||[]).reduce((m,h)=>h.usd>m.usd?h:m,{usd:0});
+  $("sL").textContent=usd(L);$("sS").textContent=usd(S);$("sB").textContent=usd(Math.max(top,bigH.usd));
+  const p=b[b.length-1].p;$("sP").textContent="$"+(p>1000?Math.round(p).toLocaleString("en"):p.toFixed(2));
+  $("nowL").innerHTML=data.sample?"sample data · live feed unavailable right now":`<b>${data.coin}</b> · last 24h · ${b.length} buckets of 5 min`;
+  $("nowR").textContent="press play";
+  const txt=`${usd(L)} of ${data.coin} longs and ${usd(S)} of shorts got liquidated in 24h. i turned it into a song`;
+  $("shareX").href="https://x.com/intent/post?text="+encodeURIComponent(txt)+"&url="+encodeURIComponent(location.origin+location.pathname+"?c="+coin);
+}
+
+// ---------- drawing ----------
+const cv=$("cv"),x=cv.getContext("2d");let W=0,H=0,flash=0,shake=0;
+function size(){const r=cv.getBoundingClientRect(),d=devicePixelRatio||1;W=r.width;H=r.height;cv.width=W*d;cv.height=H*d;x.setTransform(d,0,0,d,0,0)}
+addEventListener("resize",()=>{size();draw()});
+function draw(){if(!data)return;x.clearRect(0,0,W,H);const b=data.buckets,n=b.length,mid=H*.5,bw=W/n;
+  const mx=Math.max(...b.map(v=>Math.max(v.l,v.s)),1),sc=v=>Math.sqrt(v/mx)*(H*.42);
+  x.save();if(shake>0)x.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);
+  x.strokeStyle="#1c1f24";x.lineWidth=1;for(let k=1;k<6;k++){const gx=Math.round(W*k/6)+.5;x.beginPath();x.moveTo(gx,0);x.lineTo(gx,H);x.stroke()}
+  x.beginPath();x.moveTo(0,mid+.5);x.lineTo(W,mid+.5);x.stroke();
+  for(let i=0;i<n;i++){const v=b[i],past=idx<0||i<=idx,a=past?1:.28,hot=i===idx;
+    if(v.s){x.fillStyle=hot?"#b8ffe0":"#3ddc97";x.globalAlpha=a;const h=sc(v.s);x.fillRect(i*bw+.5,mid-h,Math.max(1,bw-1),h)}
+    if(v.l){x.fillStyle=hot?"#ffd0d9":"#ff5c7a";x.globalAlpha=a;const h=sc(v.l);x.fillRect(i*bw+.5,mid+1,Math.max(1,bw-1),h)}}
+  x.globalAlpha=1;const ps=b.map(v=>v.p),pmin=Math.min(...ps),pmax=Math.max(...ps),py=p=>H*.08+(1-(p-pmin)/((pmax-pmin)||1))*H*.84;
+  x.strokeStyle="rgba(236,238,241,.55)";x.lineWidth=1.5;x.beginPath();ps.forEach((p,i)=>{const X=i*bw+bw/2;i?x.lineTo(X,py(p)):x.moveTo(X,py(p))});x.stroke();
+  if(idx>=0){const X=idx*bw+bw/2;x.strokeStyle="#eceef1";x.lineWidth=2;x.beginPath();x.moveTo(X,0);x.lineTo(X,H);x.stroke();
+    x.fillStyle="#eceef1";x.beginPath();x.arc(X,py(ps[idx]),5,0,7);x.fill()}
+  x.font="11px "+getComputedStyle(document.body).getPropertyValue("--mono");x.fillStyle="#565c66";x.fillText("shorts rekt ↑",10,18);x.fillText("longs rekt ↓",10,H-10);
+  x.textAlign="right";const hrs=t=>new Date(t).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});x.fillText(hrs(b[0].t)+" → "+hrs(b[n-1].t),W-10,18);x.textAlign="left";
+  x.restore();
+  if(flash>0){x.fillStyle=`rgba(255,92,122,${flash})`;x.fillRect(0,0,W,H)}
+}
+function loop(){if(flash>0)flash=Math.max(0,flash-.03);if(shake>0)shake=Math.max(0,shake-1.2);draw();requestAnimationFrame(loop)}
+
+// ---------- sound ----------
+let ac,master,comp,verb,timer,nextT=0,step=0;
+const BPM=126,SIX=60/BPM/4,BARS_PER_BUCKET=.25; // one bucket per 4 sixteenths
+function setup(){if(ac)return;ac=new (window.AudioContext||window.webkitAudioContext)();
+  comp=ac.createDynamicsCompressor();comp.threshold.value=-14;comp.ratio.value=4;master=ac.createGain();master.gain.value=.8;comp.connect(master);master.connect(ac.destination);
+  verb=ac.createConvolver();const len=ac.sampleRate*1.8,ir=ac.createBuffer(2,len,ac.sampleRate);for(let c=0;c<2;c++){const d=ir.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,3)}
+  verb.buffer=ir;const vg=ac.createGain();vg.gain.value=.22;verb.connect(vg);vg.connect(comp)}
+function env(g,t,a,peak,d){g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(peak,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+a+d)}
+function kick(t,v=1){const o=ac.createOscillator(),g=ac.createGain();o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(42,t+.12);env(g,t,.002,.9*v,.32);o.connect(g);g.connect(comp);o.start(t);o.stop(t+.4)}
+let nbuf;function noise(){if(nbuf)return nbuf;nbuf=ac.createBuffer(1,ac.sampleRate*.3,ac.sampleRate);const d=nbuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return nbuf}
+function hat(t,v=.12){const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=noise();f.type="highpass";f.frequency.value=8000;env(g,t,.001,v,.04);s.connect(f);f.connect(g);g.connect(comp);s.start(t);s.stop(t+.08)}
+function clap(t){const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=noise();f.type="bandpass";f.frequency.value=1500;env(g,t,.003,.28,.14);s.connect(f);f.connect(g);g.connect(comp);g.connect(verb);s.start(t);s.stop(t+.25)}
+const MINOR=[0,3,5,7,10,12,15];
+function bass(t,amt,note){const o=ac.createOscillator(),o2=ac.createOscillator(),f=ac.createBiquadFilter(),g=ac.createGain();const fr=55*Math.pow(2,note/12);
+  o.type="sawtooth";o2.type="square";o.frequency.value=fr;o2.frequency.value=fr/2;f.type="lowpass";f.frequency.setValueAtTime(200+amt*2600,t);f.frequency.exponentialRampToValueAtTime(120,t+.35);f.Q.value=8;
+  env(g,t,.004,.18+amt*.32,.3+amt*.25);o.connect(f);o2.connect(f);f.connect(g);g.connect(comp);o.start(t);o2.start(t);o.stop(t+.8);o2.stop(t+.8)}
+function pluck(t,amt,note){const o=ac.createOscillator(),g=ac.createGain();o.type="triangle";o.frequency.value=440*Math.pow(2,note/12);env(g,t,.003,.06+amt*.16,.22+amt*.2);o.connect(g);g.connect(comp);g.connect(verb);o.start(t);o.stop(t+.6)}
+function boom(t){kick(t,1.6);const o=ac.createOscillator(),g=ac.createGain();o.type="sine";o.frequency.setValueAtTime(70,t);o.frequency.exponentialRampToValueAtTime(30,t+1.2);env(g,t,.01,.9,1.3);o.connect(g);g.connect(comp);o.start(t);o.stop(t+1.5);clap(t)}
+function riser(t,d){const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=noise();s.loop=true;f.type="bandpass";f.frequency.setValueAtTime(400,t);f.frequency.exponentialRampToValueAtTime(7000,t+d);
+  g.gain.setValueAtTime(.001,t);g.gain.exponentialRampToValueAtTime(.18,t+d);g.gain.setValueAtTime(0,t+d);s.connect(f);f.connect(g);g.connect(comp);s.start(t);s.stop(t+d+.05)}
+let mxL=1,mxS=1,bigSet=new Set(),hold=0;
+function prep(){const b=data.buckets;mxL=Math.max(...b.map(v=>v.l),1);mxS=Math.max(...b.map(v=>v.s),1);
+  bigSet=new Set();const thr=Math.max(1e6,Math.max(mxL,mxS)*.45);b.forEach((v,i)=>{if(v.l>=thr||v.s>=thr)bigSet.add(i)})}
+function sched(){while(nextT<ac.currentTime+.12){const t=nextT,s16=step%16;
+    if(hold>0){hold--;if(hold===0){boom(t)}nextT+=SIX;step++;continue}
+    if(s16%4===0)kick(t);if(s16%4===2)hat(t,.14);else hat(t,.05);if(s16===4||s16===12)clap(t);
+    if(step%2===0){idx++;const b=data.buckets;if(idx>=b.length){finish();return}
+      const v=b[idx],ui=idx;setTimeout(()=>{if(!playing)return;nowTxt(ui)},Math.max(0,(t-ac.currentTime)*1000));
+      if(bigSet.has(idx)&&step>8){riser(t,SIX*16);hold=16;const side=v.l>=v.s?"long":"short",amt=Math.max(v.l,v.s);
+        setTimeout(()=>{if(playing)banner(side,amt)},Math.max(0,(t+SIX*16-ac.currentTime)*1000));nextT+=SIX;step++;continue}
+      const p=v.p,dir=idx>0?Math.sign(p-b[idx-1].p):0,base=dir<0?0:dir>0?2:1;
+      if(v.l){const a=Math.sqrt(v.l/mxL);bass(t,a,MINOR[(base+Math.floor(a*3))%5]-12);if(a>.5)bass(t+SIX,a*.7,MINOR[base%5]-12)}
+      else if(step%8===0)bass(t,.08,0-12);
+      if(v.s){const a=Math.sqrt(v.s/mxS),n=Math.max(1,Math.round(a*4));for(let k=0;k<n;k++)pluck(t+k*SIX/2,a,MINOR[(base+k*2+Math.floor(a*4))%7])}}
+    nextT+=SIX;step++}}
+function nowTxt(i){const v=data.buckets[i];const tm=new Date(v.t).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+  $("nowL").innerHTML=`<b>${tm}</b> · ${data.coin} $${v.p>1000?Math.round(v.p).toLocaleString("en"):v.p.toFixed(2)}`;
+  $("nowR").innerHTML=(v.l?`<span class="red">${usd(v.l)} longs</span>`:"")+(v.l&&v.s?" · ":"")+(v.s?`<span class="grn">${usd(v.s)} shorts</span>`:"")||"quiet"}
+function banner(side,amt){const b=$("banner");b.style.color=side==="long"?"var(--r)":"var(--g)";b.innerHTML=`<small>${side}s wiped out</small>${usd(amt)} REKT`;b.classList.add("on");flash=.35;shake=16;setTimeout(()=>b.classList.remove("on"),1800)}
+async function play(){setup();await ac.resume();if(!data)return;prep();idx=-1;step=0;hold=0;nextT=ac.currentTime+.08;playing=true;$("play").textContent="■ stop";timer=setInterval(sched,25)}
+function stop(){playing=false;clearInterval(timer);$("play").textContent="▶ play last 24h"}
+function finish(){stop();const b=data.buckets;banner("long",b.reduce((a,v)=>a+v.l+v.s,0));$("banner").innerHTML=`<small>24h total wiped out</small>${usd(b.reduce((a,v)=>a+v.l+v.s,0))}`;idx=-1}
+$("play").onclick=()=>playing?stop():play();
+function setCoin(c){coin=c;$("cBTC").setAttribute("aria-pressed",c==="btc");$("cSOL").setAttribute("aria-pressed",c==="sol");stop();idx=-1;history.replaceState(null,"",location.pathname+(c==="sol"?"?c=sol":""));load()}
+$("cBTC").onclick=()=>setCoin("btc");$("cSOL").onclick=()=>setCoin("sol");
+$("cBTC").setAttribute("aria-pressed",coin==="btc");$("cSOL").setAttribute("aria-pressed",coin==="sol");
+size();load();loop();setInterval(()=>{if(!playing)load()},60000);
+</script>
+</body>
+</html>
