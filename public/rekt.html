@@ -123,11 +123,11 @@ const SAMPLE=(()=>{const b=[];let p=82000,s=11;const r=()=>(s=(s*16807)%21474836
 async function load(){
   try{const r=await fetch(`/api/liq?c=${coin}`,{signal:AbortSignal.timeout(9000)});if(!r.ok)throw 0;const j=await r.json();if(!j.buckets?.length)throw 0;data=j}
   catch(e){data={...SAMPLE,coin:coin.toUpperCase()}}
-  data.big=(data.highlights||[]).filter(h=>h.usd>=1e6&&["burst","cascade","mine_result"].includes(h.kind));
+  data.big=(data.highlights||[]).filter(h=>h.usd>=1e6&&["burst","cascade"].includes(h.kind));
   stats();draw();
 }
 function stats(){const b=data.buckets,L=b.reduce((a,x)=>a+x.l,0),S=b.reduce((a,x)=>a+x.s,0);
-  const top=b.reduce((m,x)=>Math.max(m,x.l,x.s),0),bigH=(data.highlights||[]).reduce((m,h)=>h.usd>m.usd?h:m,{usd:0});
+  const top=b.reduce((m,x)=>Math.max(m,x.l,x.s),0),bigH=(data.highlights||[]).filter(h=>h.kind==="burst"||h.kind==="cascade").reduce((m,h)=>h.usd>m.usd?h:m,{usd:0});
   $("sL").textContent=usd(L);$("sS").textContent=usd(S);$("sB").textContent=usd(Math.max(top,bigH.usd));
   const p=b[b.length-1].p;$("sP").textContent="$"+(p>1000?Math.round(p).toLocaleString("en"):p.toFixed(2));
   $("nowL").innerHTML=data.sample?"sample data · live feed unavailable right now":`<b>${data.coin}</b> · last 24h · ${b.length} buckets of 5 min`;
